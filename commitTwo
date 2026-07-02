@@ -1,0 +1,85 @@
+import json
+import os
+import random
+
+ARQUIVO = "clientes.json"
+
+# Cria o arquivo se não existir
+if not os.path.exists(ARQUIVO):
+    with open(ARQUIVO, "w") as arquivo:
+        json.dump({}, arquivo)
+
+# Carregar clientes
+def carregar():
+    with open(ARQUIVO, "r") as arquivo:
+        return json.load(arquivo)
+
+# Salvar clientes
+def salvar(clientes):
+    with open(ARQUIVO, "w") as arquivo:
+        json.dump(clientes, arquivo, indent=4)
+
+while True:
+    print("\n===== CAIXA AMBULANTE =====")
+    print("1 - Cadastrar cliente")
+    print("2 - Registrar compra")
+    print("3 - Consultar saldo")
+    print("4 - Sair")
+
+    opcao = input("Escolha: ")
+
+    clientes = carregar()
+
+    if opcao == "1":
+        nome = input("Nome do cliente: ")
+
+        if nome in clientes:
+            print("Cliente já cadastrado!")
+
+        else:
+            codigo = random.randint(1000, 9999)
+
+            clientes[nome] = {
+                "codigo": codigo,
+                "saldo": 0
+            }
+
+            salvar(clientes)
+
+            print("\nCliente cadastrado com sucesso!")
+            print("Código do cliente:", codigo)
+
+    elif opcao == "2":
+        nome = input("Nome do cliente: ")
+
+        if nome not in clientes:
+            print("Cliente não encontrado!")
+
+        else:
+            valor = float(input("Valor da compra: R$ "))
+
+            clientes[nome]["saldo"] += valor
+
+            salvar(clientes)
+
+            print("\nCompra aprovada!")
+            print("Compra finalizada com sucesso!")
+            print("Código para retirada:", clientes[nome]["codigo"])
+
+    elif opcao == "3":
+        nome = input("Nome do cliente: ")
+
+        if nome in clientes:
+            print("\nCliente:", nome)
+            print("Código:", clientes[nome]["codigo"])
+            print(f"Saldo: R$ {clientes[nome]['saldo']:.2f}")
+
+        else:
+            print("Cliente não encontrado!")
+
+    elif opcao == "4":
+        print("Programa encerrado!")
+        break
+
+    else:
+        print("Opção inválida!")
